@@ -1,0 +1,53 @@
+from datetime import datetime
+from typing import Optional
+from uuid import UUID
+
+from ninja import Schema
+
+from app.accounts.application.dto import UserInDTO, UserOutDTO, UserUpdateDTO
+
+
+class UserIn(Schema):
+    name: str
+    email: str
+    password: str
+
+    def to_dto(self) -> UserInDTO:
+        return UserInDTO(
+            name=self.name, email=self.email, password=self.password
+        )
+
+
+class UserOut(Schema):
+    id: UUID
+    name: str
+    email: str
+    password: str
+
+    created_at: datetime
+    deleted_at: datetime
+
+    deactive: bool
+
+    @staticmethod
+    def from_domain(dto: UserOutDTO):
+        return UserOut(
+            id=dto.id,
+            name=dto.name,
+            email=dto.email,
+            password=dto.password,
+            created_at=dto.created_at,
+            deleted_at=dto.deleted_at,
+            deactive=dto.deactive,
+        )
+
+
+class UserUpdate(Schema):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+
+    def to_dto(self) -> UserUpdateDTO:
+        return UserUpdateDTO(
+            name=self.name, email=self.email, password=self.password
+        )

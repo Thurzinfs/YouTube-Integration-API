@@ -1,1 +1,1 @@
-from infrastructure.models import *
+from app.accounts.infrastructure.models import *

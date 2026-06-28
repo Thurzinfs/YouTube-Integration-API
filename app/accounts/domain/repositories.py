@@ -20,4 +20,3 @@ class IUserRepository(ABC):
     @abstractmethod
     def verify_exists_email(self, email: str) -> bool:
         ...
-    

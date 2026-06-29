@@ -7,3 +7,7 @@ class UserNotFoundException(BaseDomainException):
 
 class ConflictFieldException(BaseDomainException):
     pass
+
+
+class RequiredFieldException(BaseDomainException):
+    pass

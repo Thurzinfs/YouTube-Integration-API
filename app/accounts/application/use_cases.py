@@ -88,3 +88,18 @@ class UpdateUserUseCase:
         self.user_repo.save(user)
 
         return UserOutDTO.from_domain(user)
+
+
+class DeactiveUserUseCase:
+    def __init__(self, user_repo: IUserRepository) -> None:
+        self.user_repo = user_repo
+
+    def execute(self, id: UUID) -> UserOutDTO:
+        user = self.user_repo.find_by_id(id)
+        if not user:
+            raise UserNotFoundException("user not found")
+        
+        user.deactive_user()
+
+        self.user_repo.save(user)
+        return UserOutDTO.from_domain(user)

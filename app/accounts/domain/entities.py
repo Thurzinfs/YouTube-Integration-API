@@ -2,7 +2,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from core.exceptions import BaseDomainException
+from pydantic import EmailStr
+
+from app.accounts.domain.exceptions import RequiredFieldException
 
 
 @dataclass
@@ -19,12 +21,20 @@ class UserEntity:
 
     def change_password(self, new_password: str) -> None:
         if not new_password:
-            BaseDomainException('new password is required')
+            RequiredFieldException('new password is required')
 
         self.password = new_password
 
+    def change_email(self, new_email: EmailStr):
+        if not new_email:
+            raise RequiredFieldException('new email is required')
+        
+    def change_name(self, new_name: str):
+        if not new_name:
+            raise RequiredFieldException("new name is required")
+
     def deactive_user(self) -> None:
         if self.deactive:
-            BaseDomainException('user already deactive')
+            raise RequiredFieldException('user already deactive')
 
         self.deactive = True

@@ -28,10 +28,14 @@ class UserEntity:
     def change_email(self, new_email: EmailStr):
         if not new_email:
             raise RequiredFieldException('new email is required')
+        
+        self.email = new_email
 
     def change_name(self, new_name: str):
         if not new_name:
             raise RequiredFieldException('new name is required')
+        
+        self.name = new_name
 
     def deactive_user(self) -> None:
         if self.deactive:

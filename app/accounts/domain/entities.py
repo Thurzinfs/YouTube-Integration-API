@@ -11,7 +11,7 @@ from app.accounts.domain.exceptions import RequiredFieldException
 class UserEntity:
     id: UUID = field(default_factory=uuid4)
     name: str = field(default='')
-    email: str = field(default='')
+    email: str | EmailStr = field(default='')
     password: str = field(default='')
 
     created_at: datetime = field(default_factory=datetime.now)
@@ -28,14 +28,14 @@ class UserEntity:
     def change_email(self, new_email: EmailStr):
         if not new_email:
             raise RequiredFieldException('new email is required')
-        
+
     def change_name(self, new_name: str):
         if not new_name:
-            raise RequiredFieldException("new name is required")
+            raise RequiredFieldException('new name is required')
 
     def deactive_user(self) -> None:
         if self.deactive:
             raise RequiredFieldException('user already deactive')
-        
+
         self.deleted_at = datetime.now()
         self.deactive = True

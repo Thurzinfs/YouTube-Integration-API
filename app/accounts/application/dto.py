@@ -2,12 +2,12 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UserInDTO(BaseModel):
     name: str
-    email: str
+    email: str | EmailStr
     password: str
 
 
@@ -18,7 +18,7 @@ class UserOutDTO(BaseModel):
     password: str
 
     created_at: datetime
-    deleted_at: datetime
+    deleted_at: datetime | None
 
     deactive: bool
 

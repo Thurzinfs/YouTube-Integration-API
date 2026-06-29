@@ -3,13 +3,14 @@ from typing import Optional
 from uuid import UUID
 
 from ninja import Schema
+from pydantic import EmailStr
 
 from app.accounts.application.dto import UserInDTO, UserOutDTO, UserUpdateDTO
 
 
 class UserIn(Schema):
     name: str
-    email: str
+    email: str | EmailStr
     password: str
 
     def to_dto(self) -> UserInDTO:
@@ -25,7 +26,7 @@ class UserOut(Schema):
     password: str
 
     created_at: datetime
-    deleted_at: datetime
+    deleted_at: datetime | None
 
     deactive: bool
 

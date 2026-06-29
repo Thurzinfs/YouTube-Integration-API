@@ -54,3 +54,13 @@ def updte_user(request, id: UUID, data: UserUpdate):
     user = use_case.execute(id, dto)
 
     return UserOut.from_domain(user)
+
+
+@router.delete('/{id}', response={200: UserOut})
+@atomic
+def deactive_user(request, id: UUID):
+    use_case = container.deactive_user_use_case()
+
+    user = use_case.execute(id)
+
+    return UserOut.from_domain(user)

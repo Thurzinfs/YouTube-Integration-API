@@ -59,7 +59,9 @@ class ResponseUserByEmailUseCase:
 
 
 class UpdateUserUseCase:
-    def __init__(self, user_repo: IUserRepository, hash_service: IHashService) -> None:
+    def __init__(
+        self, user_repo: IUserRepository, hash_service: IHashService
+    ) -> None:
         self.user_repo = user_repo
         self.hash_service = hash_service
 
@@ -67,14 +69,14 @@ class UpdateUserUseCase:
         user = self.user_repo.find_by_id(id=id)
         if not user:
             raise UserNotFoundException('user not found')
-        
+
         if user.deactive:
             raise ConflictFieldException('user is deactivate')
-        
+
         if dto.email:
             if self.user_repo.verify_exists_email(dto.email):
                 raise ConflictFieldException('email already exists')
-            
+
             user.change_email(dto.email)
 
         if dto.name:
@@ -97,8 +99,8 @@ class DeactiveUserUseCase:
     def execute(self, id: UUID) -> UserOutDTO:
         user = self.user_repo.find_by_id(id)
         if not user:
-            raise UserNotFoundException("user not found")
-        
+            raise UserNotFoundException('user not found')
+
         user.deactive_user()
 
         self.user_repo.save(user)

@@ -2,7 +2,7 @@ from uuid import UUID
 
 from app.accounts.domain.entities import UserEntity
 from app.accounts.infrastructure.models import User
-from domain.repositories import IUserRepository
+from app.accounts.domain.repositories import IUserRepository
 
 
 class UserRepository(IUserRepository):

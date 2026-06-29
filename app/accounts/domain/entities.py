@@ -36,5 +36,6 @@ class UserEntity:
     def deactive_user(self) -> None:
         if self.deactive:
             raise RequiredFieldException('user already deactive')
-
+        
+        self.deleted_at = datetime.now()
         self.deactive = True

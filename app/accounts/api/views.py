@@ -4,9 +4,11 @@ from ninja import Router
 from pydantic import EmailStr
 
 from app.accounts.api.dependencies import AccountContainer
-from app.accounts.api.schemas import UserIn, UserOut
+from app.accounts.api.schemas import UserIn, UserOut, UserUpdate
 
 from django.db.transaction import atomic
+
+from app.accounts.application.dto import UserUpdateDTO
 
 router = Router()
 
@@ -34,10 +36,21 @@ def response_user_by_id(request, id: UUID):
     return UserOut.from_domain(user)
 
 
-@router.get('/', response={200: UserOut})
+@router.get('/search/by-email', response={200: UserOut})
 def response_user_by_email(request, email: EmailStr):
     use_case = container.response_user_by_email_user_case()
 
     user = use_case.execute(email)
+
+    return UserOut.from_domain(user)
+
+@router.patch('/{id}', response={200: UserOut})
+@atomic
+def updte_user(request, id: UUID, data: UserUpdate):
+    dto = data.to_dto()
+
+    use_case = container.update_user_use_case()
+
+    user = use_case.execute(id, dto)
 
     return UserOut.from_domain(user)

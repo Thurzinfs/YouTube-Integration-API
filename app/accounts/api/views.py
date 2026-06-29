@@ -23,3 +23,21 @@ def create_user(request, data: UserIn):
     user = use_case.execute(dto)
 
     return UserOut.from_domain(user)
+
+
+@router.get('/{id}', response={200: UserOut})
+def response_user_by_id(request, id: UUID):
+    use_case = container.response_user_by_id_user_case()
+
+    user = use_case.execute(id)
+
+    return UserOut.from_domain(user)
+
+
+@router.get('/', response={200: UserOut})
+def response_user_by_email(request, email: EmailStr):
+    use_case = container.response_user_by_email_user_case()
+
+    user = use_case.execute(email)
+
+    return UserOut.from_domain(user)

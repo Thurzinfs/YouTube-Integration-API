@@ -44,6 +44,7 @@ def response_user_by_email(request, email: EmailStr):
 
     return UserOut.from_domain(user)
 
+
 @router.patch('/{id}', response={200: UserOut})
 @atomic
 def updte_user(request, id: UUID, data: UserUpdate):

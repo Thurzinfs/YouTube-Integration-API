@@ -21,6 +21,9 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'app.accounts',
     'app.music',
     'app.playlist',
@@ -131,4 +135,4 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
-CELERY_BROKER = os.getenv('CELERY_BROKER')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER')

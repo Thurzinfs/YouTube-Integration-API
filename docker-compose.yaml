@@ -21,7 +21,17 @@ services:
       - database
     volumes:
       - .:/app
-      - ./media:/app/media/data/
+
+  celery:
+    build: .
+    command: /opt/venv/bin/celery -A config worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - database
+      - music
+    volumes:
+      - .:/app
 
 volumes:
   pg_data:

@@ -4,6 +4,7 @@ from django.urls import path
 from ninja import NinjaAPI
 
 from app.accounts.api.views import router as account_router
+from app.music.api.views import router as music_router
 
 api = NinjaAPI(title='Music YouTube API', docs_url='/docs/')
 
@@ -14,6 +15,6 @@ def health_check(request):
 
 
 api.add_router('/account', account_router, tags=['Accounts'])
-
+api.add_router('/music', music_router, tags=['Music'])
 
 urlpatterns = [path('admin/', admin.site.urls), path('api/v1/', api.urls)]

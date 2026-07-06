@@ -10,11 +10,11 @@ from app.music.domain.roles import StatusMusic
 class MediaSourceEntity:
     id: UUID = field(default_factory=uuid4)
     original_url: str = field(default='')
-    title: str = field(default='')
-    channel_name: str = field(default='')
-    duration_seconds: int = field(default=0)
+    title: str | None = field(default=None)
+    channel_name: str | None = field(default=None)
+    duration_seconds: int  = field(default=0)
     status: StatusMusic | str = field(default=StatusMusic.pending)
-    audio_file_path: str = field(default='')
+    audio_file_path: str | None = field(default=None)
     created_at: datetime = field(default_factory=datetime.now)
     deleted_at: datetime | None = field(default=None)
 

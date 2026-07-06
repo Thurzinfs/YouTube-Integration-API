@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
+from typing import List
+
 from app.music.domain.entities import MediaSourceEntity
 
 
 class IMediaSourceRepository(ABC):
     @abstractmethod
-    def save(self, user: MediaSourceEntity) -> MediaSourceEntity:
+    def save(self, music: MediaSourceEntity) -> MediaSourceEntity:
         ...
 
     @abstractmethod
@@ -14,13 +16,17 @@ class IMediaSourceRepository(ABC):
         ...
 
     @abstractmethod
-    def find_by_channel_name(self, email: str) -> MediaSourceEntity | None:
+    def find_by_channel_name(self, channel_name: str) -> MediaSourceEntity | None:
         ...
 
     @abstractmethod
-    def verify_exists_title(self, email: str) -> bool:
+    def search_by_similarity(self, term: str, conf: float, limit: int = 20) -> List[MediaSourceEntity]:
         ...
 
     @abstractmethod
-    def verify_exists_url(self, url: str) -> bool:
+    def verify_exists_title(self, title: str) -> bool:
+        ...
+
+    @abstractmethod
+    def verify_exists_url(self, original_url: str) -> bool:
         ...

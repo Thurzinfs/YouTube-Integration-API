@@ -43,6 +43,12 @@ class MediaSourceRepository(IMediaSourceRepository):
         except MediaSource.DoesNotExist:
             return None
         
+    def list_all_musics(self) -> List[MediaSourceEntity]:
+        return [
+            self._to_entity(model)
+            for model in MediaSource.objects.filter(status=StatusMusic.ready, deleted_at__isnull=True).all()
+        ]
+        
     def search_by_similarity(self, term: str, conf: float, limit: int = 20) -> List[MediaSourceEntity]:
         query_set = MediaSource.objects.filter(deleted_at__isnull=True, status=StatusMusic.ready).annotate(sim=Greatest(
             TrigramSimilarity('title', term),

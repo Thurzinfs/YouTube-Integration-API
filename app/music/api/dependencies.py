@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from app.music.application.use_case import DeactiveMusicUseCase, FinishDownlaodMusicUseCase, ResponseMusicUseCase, SearchMusicsBySimilarityUseCase, StartRegisterMusicUseCase
+from app.music.application.use_case import DeactiveMusicUseCase, FinishDownlaodMusicUseCase, ListMusicsActivesUseCase, ResponseMusicUseCase, SearchMusicsBySimilarityUseCase, StartRegisterMusicUseCase
 from app.music.infrastructure.adapter import DownloadMusicStartAdapter
 from app.music.infrastructure.repository import MediaSourceRepository
 
@@ -24,6 +24,11 @@ class MusicContainer(containers.DeclarativeContainer):
     
     response_music_use_case = providers.Factory(
         ResponseMusicUseCase,
+        music_repo=music_repo
+    )
+
+    list_musics_actives_use_case = providers.Factory(
+        ListMusicsActivesUseCase,
         music_repo=music_repo
     )
 

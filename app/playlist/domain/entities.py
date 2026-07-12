@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from app.accounts.domain.exceptions import RequiredFieldException
 from app.playlist.domain.exceptions import ConflictFieldException, FieldRequiredPlaylistException
 
 
@@ -37,12 +38,12 @@ class TrackEntity:
 
     def deactive(self):
         if self.deleted_at is not None:
-            ...
+            raise ConflictFieldException('track already deleted')
 
         self.deleted_at = datetime.now()
 
     def change_custom_title(self, new_title: str):
         if not new_title:
-            ...
+            raise RequiredFieldException('field title is required')
 
         self.custom_title = new_title

@@ -25,6 +25,19 @@ def register_music(request, data: MediaSourceIn):
 
     return MediaSourceOut.from_domain(music)
 
+
+@router.get('/lists', response={200: List[MediaSourceOut]})
+def list_musics(request):
+    use_case = container.list_musics_actives_use_case()
+
+    musics = use_case.execute()
+
+    return 200, [
+        MediaSourceOut.from_domain(music)
+        for music in musics
+    ]
+
+
 @router.get('/{id}', response={200: MediaSourceOut})
 def response_music(request, id: UUID):
     use_case = container.response_music_use_case()

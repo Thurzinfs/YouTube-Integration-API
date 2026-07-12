@@ -20,6 +20,10 @@ class IMediaSourceRepository(ABC):
         ...
 
     @abstractmethod
+    def list_all_musics(self) -> List[MediaSourceEntity]:
+        ...
+
+    @abstractmethod
     def search_by_similarity(self, term: str, conf: float, limit: int = 20) -> List[MediaSourceEntity]:
         ...
 

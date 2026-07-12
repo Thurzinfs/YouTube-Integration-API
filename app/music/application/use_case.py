@@ -70,6 +70,21 @@ class ResponseMusicUseCase:
         return MediaSourceOutDTO.from_domain(music)
 
 
+class ListMusicsActivesUseCase:
+    def __init__(self, music_repo: IMediaSourceRepository) -> None:
+        self.music_repo = music_repo
+
+    def execute(self) -> List[MediaSourceOutDTO]:
+        musics = self.music_repo.list_all_musics()
+        if not musics:
+            return []
+        
+        return [
+            MediaSourceOutDTO.from_domain(music)
+            for music in musics
+        ]
+
+
 class SearchMusicsBySimilarityUseCase:
     def __init__(self, music_repo: IMediaSourceRepository) -> None:
         self.music_repo = music_repo

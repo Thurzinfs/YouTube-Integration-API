@@ -7,3 +7,7 @@ class PlaylistNotFoundException(BaseDomainException):
 
 class ConflictFieldException(BaseDomainException):
     pass
+
+
+class FieldRequiredPlaylistException(BaseDomainException):
+    pass

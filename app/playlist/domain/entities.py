@@ -63,3 +63,9 @@ class PlaylistTrackEntity:
             raise ConflictFieldException('playlist track already deleted')
         
         self.deleted_at = datetime.now()
+
+    def change_position(self, position: int):
+        if not position:
+            raise FieldRequiredPlaylistException('new position is required')
+        
+        self.position = position

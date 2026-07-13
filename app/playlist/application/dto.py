@@ -39,3 +39,21 @@ class TrackOutDTO(BaseModel):
 
 class TrackUpdateDTO(BaseModel):
     custom_title: Optional[str] = None
+
+
+class PlaylistTrackInDTO(BaseModel):
+    playlist: UUID
+    track: UUID
+    position: int
+
+
+class PlaylistTrackOutDTO(BaseModel):
+    id: UUID
+    playlist: UUID
+    track: UUID
+    position: int
+    deleted_at: datetime
+
+
+class PlaylistTrackUpdateDTO(BaseModel):
+    position: int

@@ -34,7 +34,7 @@ class TrackEntity:
     user: UUID | None = field(default=None)
     media_source: UUID | None = field(default=None)
     custom_title: str = field(default='')
-    created_at: datetime = field(default_factory=datetime.now)
+    added_at: datetime = field(default_factory=datetime.now)
     deleted_at: datetime | None = field(default=None)
 
     def deactive(self):

@@ -13,6 +13,8 @@ class Playlist(models.Model):
     user = models.ForeignKey(
         'accounts.User', on_delete=models.CASCADE, null=False
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, default=None)
 
     class Meta:
         db_table = 'playlists'
@@ -30,6 +32,7 @@ class Track(models.Model):
     )
     custom_title = models.CharField(max_length=255)
     added_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, default=None)
 
     class Meta:
         db_table = 'tracks'
@@ -46,6 +49,7 @@ class PlaylistTrack(models.Model):
     )
     track = models.ForeignKey('Track', on_delete=models.CASCADE, null=False)
     position = models.IntegerField()
+    deleted_at = models.DateTimeField(null=True, default=None)
 
     class Meta:
         db_table = 'playlists_track'

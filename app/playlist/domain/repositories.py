@@ -20,3 +20,21 @@ class IPlaylistRepository(ABC):
     @abstractmethod
     def verify_exists_playlist_by_name(self, name: str) -> bool:
         ...
+
+
+class ITrackRepository(ABC):
+    @abstractmethod
+    def save(self, track: TrackEntity) -> TrackEntity:
+        ...
+
+    @abstractmethod
+    def find_by_id(self, id: UUID) -> TrackEntity | None:
+        ...
+
+    @abstractmethod
+    def find_by_custom_title(self, custom_title: str) -> TrackEntity | None:
+        ...
+
+    @abstractmethod
+    def verify_exists_track_by_custom_title(self, custom_title: str) -> TrackEntity | None:
+        ...

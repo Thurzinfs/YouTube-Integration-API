@@ -36,7 +36,7 @@ class ITrackRepository(ABC):
         ...
 
     @abstractmethod
-    def verify_exists_track_by_custom_title(self, custom_title: str) -> TrackEntity | None:
+    def verify_exists_track_by_custom_title(self, custom_title: str) -> bool:
         ...
 
 

@@ -38,3 +38,21 @@ class ITrackRepository(ABC):
     @abstractmethod
     def verify_exists_track_by_custom_title(self, custom_title: str) -> TrackEntity | None:
         ...
+
+
+class IPlaylistTrackRepository(ABC):
+    @abstractmethod
+    def save(self, entity: PlaylistTrackEntity) -> PlaylistTrackEntity:
+        ...
+
+    @abstractmethod
+    def find_by_id(self, id: UUID) -> PlaylistTrackEntity | None:
+        ...
+
+    @abstractmethod
+    def find_by_position(self, position: int) -> PlaylistTrackEntity | None:
+        ...
+    
+    @abstractmethod
+    def verify_exists_position(self, position: int) -> bool:
+        ...

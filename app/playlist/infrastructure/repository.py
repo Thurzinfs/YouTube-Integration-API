@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from app.playlist.domain.entities import PlaylistEntity, TrackEntity
-from app.playlist.domain.repositories import IPlaylistRepository, ITrackRepository
-from app.playlist.infrastructure.models import Playlist, Track
+from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
+from app.playlist.domain.repositories import IPlaylistRepository, IPlaylistTrackRepository, ITrackRepository
+from app.playlist.infrastructure.models import Playlist, PlaylistTrack, Track
 
 
 class PlaylistRepository(IPlaylistRepository):
@@ -40,7 +40,7 @@ class PlaylistRepository(IPlaylistRepository):
         return PlaylistEntity(
             id=model.id,
             name=model.name,
-            user=model.user,
+            user=model.user.id,
             created_at=model.created_at,
             deleted_at=model.deleted_at
         )
@@ -81,9 +81,50 @@ class TrackRepository(ITrackRepository):
     def _to_model(self, model: Track) -> TrackEntity:
         return TrackEntity(
             id=model.id,
-            user=model.user,
-            media_source=model.media_source,
+            user=model.user.id,
+            media_source=model.media_source.id,
             custom_title=model.custom_title,
             added_at=model.added_at,
+            deleted_at=model.deleted_at
+        )
+
+
+class PlaylistTrackRepository(IPlaylistTrackRepository):
+    def save(self, entity: PlaylistTrackEntity) -> PlaylistTrackEntity:
+        PlaylistTrack.objects.update_or_create(
+            id=entity.id,
+            defaults={
+                'playlist': entity.playlist,
+                'track': entity.track,
+                'position': entity.position,
+                'deleted_at': entity.deleted_at
+            }
+        )
+
+        return entity
+    
+    def find_by_id(self, id: UUID) -> PlaylistTrackEntity | None:
+        try:
+            return self._to_model(PlaylistTrack.objects.get(id=id))
+
+        except PlaylistTrack.DoesNotExist:
+            return None
+        
+    def find_by_position(self, position: int) -> PlaylistTrackEntity | None:
+        try:
+            return self._to_model(PlaylistTrack.objects.get(position=position))
+
+        except PlaylistTrack.DoesNotExist:
+            return None
+        
+    def verify_exists_position(self, position: int) -> bool:
+        return PlaylistTrack.objects.filter(position=position).exists()
+    
+    def _to_model(self, model: PlaylistTrack) -> PlaylistTrackEntity:
+        return PlaylistTrackEntity(
+            id=model.id, 
+            playlist=model.playlist.id,
+            track=model.track.id,
+            position=model.position,
             deleted_at=model.deleted_at
         )

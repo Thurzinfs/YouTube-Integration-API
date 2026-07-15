@@ -17,6 +17,16 @@ class PlaylistOutDTO(BaseModel):
     created_at: datetime
     deleted_at: Optional[datetime] = None
 
+    @classmethod
+    def from_domain(cls, model):
+        return cls(
+            id=model.id,
+            name=model.name,
+            user=model.user,
+            created_at=model.created_at,
+            deleted_at=model.deleted_at
+        )
+
 
 class PlaylistUpdateDTO(BaseModel):
     name: Optional[str] = None
@@ -36,6 +46,17 @@ class TrackOutDTO(BaseModel):
     created_at: datetime
     deleted_at: Optional[datetime] = None
 
+    @classmethod
+    def from_domain(cls, model):
+        return cls(
+            id=model.id,
+            user=model.user,
+            media_source=model.media_source,
+            custom_title=model.custom_title,
+            created_at=model.created_at,
+            deleted_at=model.deleted_at
+        )
+
 
 class TrackUpdateDTO(BaseModel):
     custom_title: Optional[str] = None
@@ -53,6 +74,16 @@ class PlaylistTrackOutDTO(BaseModel):
     track: UUID
     position: int
     deleted_at: datetime
+
+    @classmethod
+    def from_domain(cls, model):
+        return cls(
+            id=model.id,
+            playlist=model.playlist, 
+            track=model.track,
+            position=model.position,
+            deleted_at=model.deleted_at
+        )
 
 
 class PlaylistTrackUpdateDTO(BaseModel):

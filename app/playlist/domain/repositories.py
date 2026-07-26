@@ -61,6 +61,14 @@ class IPlaylistTrackRepository(ABC):
     @abstractmethod
     def find_by_position(self, position: int) -> PlaylistTrackEntity | None:
         ...
+
+    @abstractmethod
+    def count_all_playlist_track(self, id: UUID) -> int:
+        ...
+
+    @abstractmethod
+    def verify_exists_playlist_track_by_playlist_track(self, track: UUID, playlist: UUID) -> bool:
+        ...
     
     @abstractmethod
     def verify_exists_position(self, position: int) -> bool:

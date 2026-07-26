@@ -7,9 +7,9 @@ from app.music.application.dto import MediaSourceOutDTO
 from app.music.domain.exceptions import FailedDownloadMusicException, NotFoundMediaSourceException
 from app.music.domain.repositories import IMediaSourceRepository
 from app.music.domain.roles import StatusMusic
-from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistTrackInDTO, PlaylistTrackOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
+from app.playlist.application.dto import DeletePlaylistTrackInDTO, PlaylistInDTO, PlaylistOutDTO, PlaylistTrackInDTO, PlaylistTrackOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
 from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
-from app.playlist.domain.exceptions import ConflictFieldException, PlaylisTrackAlreadyExistsException, PlaylistIsDeletedException, PlaylistNotFoundException, TrackNotFoundException
+from app.playlist.domain.exceptions import ConflictFieldException, PlaylisTrackAlreadyExistsException, PlaylistIsDeletedException, PlaylistNotFoundException, PlaylistTrackNotFoundException, TrackNotFoundException
 from app.playlist.domain.repositories import IPlaylistRepository, IPlaylistTrackRepository, ITrackRepository
 from core.exceptions import BaseDomainException
 
@@ -199,3 +199,28 @@ class ListMusicsInPlaylistTrack:
             MediaSourceOutDTO.from_domain(music)
             for music in musics
         ]
+
+
+class RemoveMusicInPlaylist:
+    def __init__(self, playlist_track_repo: IPlaylistTrackRepository, track_repo: ITrackRepository, user_repo: IUserRepository) -> None:
+        self.playlist_track_repo = playlist_track_repo
+        self.track_repo = track_repo
+        self.user_repo = user_repo
+
+    def execute(self, user: UUID, dto: DeletePlaylistTrackInDTO):
+        playlist_track = self.playlist_track_repo.find_by_id(dto.playlist_track)
+        if not playlist_track:
+            raise PlaylistTrackNotFoundException('playlist track not found')
+
+        if playlist_track.track is None:
+            raise BaseDomainException('playlist track has no track')
+
+        track = self.track_repo.find_by_id(playlist_track.track)
+        if not track:
+            raise TrackNotFoundException('track not found')
+
+        if track.user != user:
+            raise BaseDomainException('user unauthorized')
+
+        playlist_track.deactive()
+        self.playlist_track_repo.save(playlist_track)

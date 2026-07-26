@@ -5,10 +5,11 @@ from app.accounts.domain.repositories import IUserRepository
 from app.music.domain.exceptions import FailedDownloadMusicException, NotFoundMediaSourceException
 from app.music.domain.repositories import IMediaSourceRepository
 from app.music.domain.roles import StatusMusic
-from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
-from app.playlist.domain.entities import PlaylistEntity, TrackEntity
-from app.playlist.domain.exceptions import ConflictFieldException, PlaylistIsDeletedException, PlaylistNotFoundException
-from app.playlist.domain.repositories import IPlaylistRepository, ITrackRepository
+from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistTrackInDTO, PlaylistTrackOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
+from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
+from app.playlist.domain.exceptions import ConflictFieldException, PlaylisTrackAlreadyExistsException, PlaylistIsDeletedException, PlaylistNotFoundException, TrackNotFoundException
+from app.playlist.domain.repositories import IPlaylistRepository, IPlaylistTrackRepository, ITrackRepository
+from core.exceptions import BaseDomainException
 
 
 class RegisterPlaylistUseCase:
@@ -120,3 +121,40 @@ class ListTrackByUserUseCase:
             TrackOutDTO.from_domain(track)
             for track in tracks
         ]
+
+
+class RegisterPlaylistTrackUseCase:
+    def __init__(self, playlist_repo: IPlaylistRepository, user_repo: IUserRepository, track_repo: ITrackRepository, playlist_track_repo: IPlaylistTrackRepository) -> None:
+        self.playlist_repo = playlist_repo
+        self.user_repo = user_repo
+        self.track_repo = track_repo
+        self.playlist_track_repo = playlist_track_repo
+
+    def execute(self, user: UUID, dto: PlaylistTrackInDTO):
+        playlist = self.playlist_repo.find_by_id(dto.playlist)
+        if not playlist:
+            raise PlaylistNotFoundException('playlist not found')
+
+        if playlist.user != user:
+            raise  BaseDomainException("permission denied")
+
+        track = self.track_repo.find_by_id(dto.track)
+        if not track:
+            raise TrackNotFoundException('track not found')
+
+        if track.user != user:
+            raise  BaseDomainException("permission denied")
+
+        if self.playlist_track_repo.verify_exists_playlist_track_by_playlist_track(dto.track, dto.playlist):
+            raise PlaylisTrackAlreadyExistsException("playlist track already exists")
+
+        position = self.playlist_track_repo.count_all_playlist_track(dto.playlist)
+
+        playlist_track = PlaylistTrackEntity(
+            playlist=dto.playlist,
+            track=dto.track,
+            position=position + 1
+        )
+
+        self.playlist_track_repo.save(playlist_track)
+        return PlaylistTrackOutDTO.from_domain(playlist_track)

@@ -73,3 +73,8 @@ class IPlaylistTrackRepository(ABC):
     @abstractmethod
     def verify_exists_position(self, position: int) -> bool:
         ...
+
+    @abstractmethod
+    def list_musics_whithin_playlist(self, playlist: UUID) -> List[PlaylistTrackEntity]:
+        ...
+    

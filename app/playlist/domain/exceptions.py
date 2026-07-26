@@ -15,3 +15,11 @@ class FieldRequiredPlaylistException(BaseDomainException):
 
 class PlaylistIsDeletedException(BaseDomainException):
     pass
+
+
+class TrackNotFoundException(BaseDomainException):
+    pass
+
+
+class PlaylisTrackAlreadyExistsException(BaseDomainException):
+    pass

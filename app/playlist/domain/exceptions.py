@@ -11,3 +11,7 @@ class ConflictFieldException(BaseDomainException):
 
 class FieldRequiredPlaylistException(BaseDomainException):
     pass
+
+
+class PlaylistIsDeletedException(BaseDomainException):
+    pass

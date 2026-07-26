@@ -7,7 +7,7 @@ from app.music.application.dto import MediaSourceOutDTO
 from app.music.domain.exceptions import FailedDownloadMusicException, NotFoundMediaSourceException
 from app.music.domain.repositories import IMediaSourceRepository
 from app.music.domain.roles import StatusMusic
-from app.playlist.application.dto import DeletePlaylistTrackInDTO, PlaylistInDTO, PlaylistOutDTO, PlaylistTrackInDTO, PlaylistTrackOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
+from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistTrackInDTO, PlaylistTrackOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
 from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
 from app.playlist.domain.exceptions import ConflictFieldException, PlaylisTrackAlreadyExistsException, PlaylistIsDeletedException, PlaylistNotFoundException, PlaylistTrackNotFoundException, TrackNotFoundException
 from app.playlist.domain.repositories import IPlaylistRepository, IPlaylistTrackRepository, ITrackRepository
@@ -206,8 +206,8 @@ class RemoveMusicInPlaylist:
         self.playlist_track_repo = playlist_track_repo
         self.track_repo = track_repo
 
-    def execute(self, user: UUID, dto: DeletePlaylistTrackInDTO):
-        playlist_track = self.playlist_track_repo.find_by_id(dto.playlist_track)
+    def execute(self, user: UUID, playlist_track_id: UUID):
+        playlist_track = self.playlist_track_repo.find_by_id(playlist_track_id)
         if not playlist_track:
             raise PlaylistTrackNotFoundException('playlist track not found')
 
@@ -221,4 +221,4 @@ class RemoveMusicInPlaylist:
         if track.user != user:
             raise BaseDomainException('user unauthorized')
 
-        self.playlist_track_repo.delete_by_id(dto.playlist_track)
+        self.playlist_track_repo.delete_by_id(playlist_track.id)

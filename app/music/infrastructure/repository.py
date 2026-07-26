@@ -35,6 +35,12 @@ class MediaSourceRepository(IMediaSourceRepository):
 
         except MediaSource.DoesNotExist:
             return None
+
+    def find_many_by_ids(self, ids: List[MediaSourceEntity]) -> List[MediaSourceEntity]:
+        return [
+            self._to_entity(music)
+            for music in MediaSource.objects.filter(id__in=ids)
+        ]
         
     def find_by_channel_name(self, channel_name: str) -> MediaSourceEntity | None:
         try:

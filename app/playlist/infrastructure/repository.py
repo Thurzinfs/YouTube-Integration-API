@@ -80,6 +80,12 @@ class TrackRepository(ITrackRepository):
 
         except Track.DoesNotExist:
             return None
+
+    def find_many_by_ids(self, ids: List[UUID]) -> List[TrackEntity]:
+        return [
+            self._to_model(track)
+            for track in Track.objects.filter(id__in=ids)
+        ]
         
     def find_by_custom_title(self, custom_title: str) -> TrackEntity | None:
         try:
@@ -148,6 +154,16 @@ class PlaylistTrackRepository(IPlaylistTrackRepository):
         
     def verify_exists_position(self, position: int) -> bool:
         return PlaylistTrack.objects.filter(position=position).exists()
+
+    def list_playlist_track_by_playlist(self, playlist: UUID) -> List[PlaylistTrackEntity]:
+        try:
+            return [
+                self._to_model(playlist_track)
+                for playlist_track in PlaylistTrack.objects.filter(playlist__id=playlist).order_by('position').all()
+            ]
+
+        except PlaylistTrack.DoesNotExist:
+            return []
     
     def _to_model(self, model: PlaylistTrack) -> PlaylistTrackEntity:
         return PlaylistTrackEntity(

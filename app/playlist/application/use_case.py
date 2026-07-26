@@ -1,8 +1,10 @@
+from uuid import UUID
+
 from app.accounts.domain.exceptions import UserNotFoundException
 from app.accounts.domain.repositories import IUserRepository
-from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO
+from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistUpdateDTO
 from app.playlist.domain.entities import PlaylistEntity
-from app.playlist.domain.exceptions import ConflictFieldException
+from app.playlist.domain.exceptions import ConflictFieldException, PlaylistIsDeletedException, PlaylistNotFoundException
 from app.playlist.domain.repositories import IPlaylistRepository
 
 
@@ -26,4 +28,15 @@ class RegisterPlaylistUseCase:
 
         self.playlist_repo.save(playlist)
         return PlaylistOutDTO.from_domain(playlist)
- 
+
+
+class ResponsePlaylistUseCase:
+    def __init__(self, playlist_repo: IPlaylistRepository) -> None:
+        self.playlist_repo = playlist_repo
+
+    def execute(self, id: UUID):
+        playlist = self.playlist_repo.find_by_id(id)
+        if not playlist:
+            raise PlaylistNotFoundException('playlist not found')
+
+        return PlaylistOutDTO.from_domain(playlist)

@@ -16,7 +16,7 @@ class IMediaSourceRepository(ABC):
         ...
 
     @abstractmethod
-    def find_many_by_ids(self, ids: List[MediaSourceEntity]) -> List[MediaSourceEntity]:
+    def find_many_by_ids(self, ids: List[UUID]) -> List[MediaSourceEntity]:
         ...
 
     @abstractmethod

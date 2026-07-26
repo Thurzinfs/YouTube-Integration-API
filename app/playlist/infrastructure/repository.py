@@ -139,6 +139,12 @@ class PlaylistTrackRepository(IPlaylistTrackRepository):
 
         except PlaylistTrack.DoesNotExist:
             return None
+
+    def count_all_playlist_track(self, id: UUID) -> int:
+        return PlaylistTrack.objects.filter(playlist__id=id).count()
+
+    def verify_exists_playlist_track_by_playlist_track(self, track: UUID, playlist: UUID) -> bool:
+        return PlaylistTrack.objects.filter(playlist__id=playlist, track__id=track).exists()
         
     def verify_exists_position(self, position: int) -> bool:
         return PlaylistTrack.objects.filter(position=position).exists()

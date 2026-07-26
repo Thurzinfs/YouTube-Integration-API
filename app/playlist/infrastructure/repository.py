@@ -49,6 +49,9 @@ class PlaylistRepository(IPlaylistRepository):
         except Playlist.DoesNotExist:
             return []
 
+    def delete_by_id(self, id: UUID) -> None:
+        Playlist.objects.filter(id=id).delete()
+
     def _to_model(self, model: Playlist) -> PlaylistEntity:
         return PlaylistEntity(
             id=model.id,

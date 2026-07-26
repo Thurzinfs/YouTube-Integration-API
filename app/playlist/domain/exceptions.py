@@ -23,3 +23,7 @@ class TrackNotFoundException(BaseDomainException):
 
 class PlaylisTrackAlreadyExistsException(BaseDomainException):
     pass
+
+
+class PlaylistTrackNotFoundException(BaseDomainException):
+    pass

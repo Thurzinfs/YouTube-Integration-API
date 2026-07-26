@@ -106,6 +106,9 @@ class TrackRepository(ITrackRepository):
 
         except Track.DoesNotExist:
             return []
+
+    def delete_by_id(self, id: UUID) -> None:
+        Track.objects.filter(id=id).delete()
     
     def _to_model(self, model: Track) -> TrackEntity:
         return TrackEntity(
@@ -164,6 +167,9 @@ class PlaylistTrackRepository(IPlaylistTrackRepository):
 
         except PlaylistTrack.DoesNotExist:
             return []
+
+    def delete_by_id(self, id: UUID) -> None:
+        PlaylistTrack.objects.filter(id=id).delete()
     
     def _to_model(self, model: PlaylistTrack) -> PlaylistTrackEntity:
         return PlaylistTrackEntity(

@@ -88,3 +88,8 @@ class PlaylistTrackOutDTO(BaseModel):
 
 class PlaylistTrackUpdateDTO(BaseModel):
     position: int
+
+
+class DeletePlaylistTrackInDTO(BaseModel):
+    playlist_track: UUID
+    media_source: UUID

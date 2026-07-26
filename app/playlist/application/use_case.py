@@ -2,10 +2,13 @@ from uuid import UUID
 
 from app.accounts.domain.exceptions import UserNotFoundException
 from app.accounts.domain.repositories import IUserRepository
-from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistUpdateDTO
-from app.playlist.domain.entities import PlaylistEntity
+from app.music.domain.exceptions import FailedDownloadMusicException, NotFoundMediaSourceException
+from app.music.domain.repositories import IMediaSourceRepository
+from app.music.domain.roles import StatusMusic
+from app.playlist.application.dto import PlaylistInDTO, PlaylistOutDTO, PlaylistUpdateDTO, TrackInDTO, TrackOutDTO
+from app.playlist.domain.entities import PlaylistEntity, TrackEntity
 from app.playlist.domain.exceptions import ConflictFieldException, PlaylistIsDeletedException, PlaylistNotFoundException
-from app.playlist.domain.repositories import IPlaylistRepository
+from app.playlist.domain.repositories import IPlaylistRepository, ITrackRepository
 
 
 class RegisterPlaylistUseCase:
@@ -28,6 +31,21 @@ class RegisterPlaylistUseCase:
 
         self.playlist_repo.save(playlist)
         return PlaylistOutDTO.from_domain(playlist)
+
+
+class ListPlaylistByUserUseCase:
+    def __init__(self, playlist_repo: IPlaylistRepository) -> None:
+        self.playlist_repo = playlist_repo
+
+    def execute(self, user: UUID):
+        playlists = self.playlist_repo.list_playlist_by_user(user)
+        if not playlists:
+            return []
+
+        return [
+            PlaylistOutDTO.from_domain(playlist)
+            for playlist in playlists
+        ]
 
 
 class ResponsePlaylistUseCase:
@@ -59,4 +77,31 @@ class PlaylistUpdateUseCase:
 
         self.playlist_repo.save(playlist)
         return PlaylistOutDTO.from_domain(playlist)
-    
+
+
+class RegisterTrackUseCase:
+    def __init__(self, track_repo: ITrackRepository, media_source_repo: IMediaSourceRepository, user_repo: IUserRepository) -> None:
+        self.track_repo = track_repo
+        self.user_repo = user_repo
+        self.media_source_repo = media_source_repo
+
+    def execute(self, dto: TrackInDTO):
+        user = self.user_repo.find_by_id(dto.user)
+        if not user:
+            raise UserNotFoundException('user not found')
+
+        media_source = self.media_source_repo.find_by_id(dto.media_source)
+        if not media_source:
+            raise NotFoundMediaSourceException('media source not found')
+
+        if media_source.status != StatusMusic.ready:
+            raise FailedDownloadMusicException('failed music download')
+
+        track = TrackEntity(
+            user=user.id,
+            media_source=media_source.id, 
+            custom_title=dto.custom_title
+        )
+
+        self.track_repo.save(track)
+        return TrackOutDTO.from_domain(track)

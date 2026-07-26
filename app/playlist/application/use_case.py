@@ -40,3 +40,23 @@ class ResponsePlaylistUseCase:
             raise PlaylistNotFoundException('playlist not found')
 
         return PlaylistOutDTO.from_domain(playlist)
+
+
+class PlaylistUpdateUseCase:
+    def __init__(self, playlist_repo: IPlaylistRepository) -> None:
+        self.playlist_repo = playlist_repo
+
+    def execute(self, id: UUID, dto: PlaylistUpdateDTO):
+        playlist = self.playlist_repo.find_by_id(id)
+        if not playlist:
+            raise PlaylistNotFoundException('playlist not found')
+
+        if playlist.deleted_at is not None:
+            raise PlaylistIsDeletedException('playlist is deleted')
+
+        if dto.name:
+            playlist.change_name(dto.name)
+
+        self.playlist_repo.save(playlist)
+        return PlaylistOutDTO.from_domain(playlist)
+    

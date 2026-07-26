@@ -26,6 +26,10 @@ class IPlaylistRepository(ABC):
     def verify_exists_playlist_by_name(self, name: str) -> bool:
         ...
 
+    @abstractmethod
+    def delete_by_id(self, id: UUID) -> None:
+        ...
+
 
 class ITrackRepository(ABC):
     @abstractmethod

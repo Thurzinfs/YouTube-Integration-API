@@ -37,6 +37,10 @@ class ITrackRepository(ABC):
         ...
 
     @abstractmethod
+    def find_many_by_ids(self, ids: List[UUID]) -> List[TrackEntity]:
+        ...
+
+    @abstractmethod
     def find_by_custom_title(self, custom_title: str) -> TrackEntity | None:
         ...
 

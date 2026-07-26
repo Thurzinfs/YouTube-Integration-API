@@ -16,6 +16,10 @@ class IMediaSourceRepository(ABC):
         ...
 
     @abstractmethod
+    def find_many_by_ids(self, ids: List[MediaSourceEntity]) -> List[MediaSourceEntity]:
+        ...
+
+    @abstractmethod
     def find_by_channel_name(self, channel_name: str) -> MediaSourceEntity | None:
         ...
 

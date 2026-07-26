@@ -41,6 +41,10 @@ class ITrackRepository(ABC):
         ...
 
     @abstractmethod
+    def list_track_by_user(self, user: UUID) -> List[TrackEntity]:
+        ...
+
+    @abstractmethod
     def verify_exists_track_by_custom_title(self, custom_title: str) -> bool:
         ...
 

@@ -49,6 +49,10 @@ class ITrackRepository(ABC):
         ...
 
     @abstractmethod
+    def delete_by_id(self, id: UUID) -> None:
+        ...
+
+    @abstractmethod
     def verify_exists_track_by_custom_title(self, custom_title: str) -> bool:
         ...
 
@@ -76,6 +80,10 @@ class IPlaylistTrackRepository(ABC):
     
     @abstractmethod
     def verify_exists_position(self, position: int) -> bool:
+        ...
+
+    @abstractmethod
+    def delete_by_id(self, id: UUID) -> None:
         ...
 
     @abstractmethod

@@ -1,7 +1,9 @@
 from uuid import UUID
 
+from app import music
 from app.accounts.domain.exceptions import UserNotFoundException
 from app.accounts.domain.repositories import IUserRepository
+from app.music.application.dto import MediaSourceOutDTO
 from app.music.domain.exceptions import FailedDownloadMusicException, NotFoundMediaSourceException
 from app.music.domain.repositories import IMediaSourceRepository
 from app.music.domain.roles import StatusMusic
@@ -158,3 +160,42 @@ class RegisterPlaylistTrackUseCase:
 
         self.playlist_track_repo.save(playlist_track)
         return PlaylistTrackOutDTO.from_domain(playlist_track)
+
+
+class ListMusicsInPlaylistTrack:
+    def __init__(self, playlist_track_repo: IPlaylistTrackRepository, track_repo: ITrackRepository, music_repo: IMediaSourceRepository) -> None:
+        self.playlist_track_repo = playlist_track_repo
+        self.track_repo = track_repo
+        self.music_repo = music_repo
+
+    def execute(self, playlist: UUID):
+        playlist_track = self.playlist_track_repo.list_musics_whithin_playlist(playlist)
+        if not playlist_track:
+            raise BaseDomainException("playlist track not found")
+
+        track_ids = [pt.track for pt in playlist_track if pt.track is not None]
+
+        tracks = self.track_repo.find_many_by_ids(track_ids)
+        tracks_by_id = {track.id: track for track in tracks}
+
+        media_sources_id = [track.media_source for track in tracks if track.media_source is not None]
+
+        media_source = self.music_repo.find_many_by_ids(media_sources_id)
+        media_source_by_id = {ms.id: ms for ms in media_source}
+
+        musics = []
+        for pt in playlist_track:
+            track = tracks_by_id.get(pt.track)  # type: ignore
+            if track is None:
+                continue
+
+            media_source = media_source_by_id.get(track.media_source)  # type: ignore
+            if media_source is None:
+                continue 
+
+            musics.append(media_source)
+
+        return [
+            MediaSourceOutDTO.from_domain(music)
+            for music in musics
+        ]

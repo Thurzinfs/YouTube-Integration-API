@@ -33,8 +33,8 @@ class PlaylistUpdateDTO(BaseModel):
 
 
 class TrackInDTO(BaseModel):
-    user: Optional[UUID] = None
-    media_source: Optional[UUID] = None
+    user: UUID
+    media_source: UUID
     custom_title: str
 
 

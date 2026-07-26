@@ -222,3 +222,18 @@ class RemoveMusicInPlaylist:
             raise BaseDomainException('user unauthorized')
 
         self.playlist_track_repo.delete_by_id(playlist_track.id)
+
+
+class RemoveMusicInTrack:
+    def __init__(self, track_repo: ITrackRepository) -> None:
+        self.track_repo = track_repo
+
+    def execute(self, user: UUID, track_id: UUID):
+        track = self.track_repo.find_by_id(track_id)
+        if not track:
+            raise TrackNotFoundException('track not found')
+
+        if track.user != user:
+            raise BaseDomainException('user unauthorized')
+
+        self.track_repo.delete_by_id(track.id)

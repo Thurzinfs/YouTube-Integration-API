@@ -105,3 +105,18 @@ class RegisterTrackUseCase:
 
         self.track_repo.save(track)
         return TrackOutDTO.from_domain(track)
+
+
+class ListTrackByUserUseCase:
+    def __init__(self, track_repo: ITrackRepository) -> None:
+        self.track_repo = track_repo
+
+    def execute(self, user: UUID):
+        tracks = self.track_repo.list_track_by_user(user)
+        if not tracks:
+            return []
+
+        return [
+            TrackOutDTO.from_domain(track)
+            for track in tracks
+        ]

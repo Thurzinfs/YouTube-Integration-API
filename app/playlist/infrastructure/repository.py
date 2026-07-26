@@ -83,13 +83,23 @@ class TrackRepository(ITrackRepository):
         
     def find_by_custom_title(self, custom_title: str) -> TrackEntity | None:
         try:
-            self._to_model(Track.objects.get(custom_title=custom_title))
+            return self._to_model(Track.objects.get(custom_title=custom_title))
 
         except Track.DoesNotExist:
             return None
         
     def verify_exists_track_by_custom_title(self, custom_title: str) -> bool:
         return Track.objects.filter(custom_title=custom_title).exists()
+
+    def list_track_by_user(self, user: UUID) -> List[TrackEntity]:
+        try:
+            return [
+                self._to_model(track)
+                for track in Track.objects.filter(user=user).all()
+            ]
+
+        except Track.DoesNotExist:
+            return []
     
     def _to_model(self, model: Track) -> TrackEntity:
         return TrackEntity(

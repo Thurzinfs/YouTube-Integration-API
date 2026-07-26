@@ -1,4 +1,7 @@
+from typing import List
 from uuid import UUID
+
+from passlib import exc
 
 from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
 from app.playlist.domain.repositories import IPlaylistRepository, IPlaylistTrackRepository, ITrackRepository
@@ -35,6 +38,16 @@ class PlaylistRepository(IPlaylistRepository):
         
     def verify_exists_playlist_by_name(self, name: str) -> bool:
         return Playlist.objects.filter(name=name).exists()
+
+    def list_playlist_by_user(self, id: UUID) -> List[PlaylistEntity]:
+        try:
+            return [
+                self._to_model(playlist)
+                for playlist in Playlist.objects.filter(user=id).all()
+            ]
+
+        except Playlist.DoesNotExist:
+            return []
 
     def _to_model(self, model: Playlist) -> PlaylistEntity:
         return PlaylistEntity(

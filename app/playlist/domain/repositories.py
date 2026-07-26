@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 from uuid import UUID
 
 from app.playlist.domain.entities import PlaylistEntity, PlaylistTrackEntity, TrackEntity
@@ -15,6 +16,10 @@ class IPlaylistRepository(ABC):
 
     @abstractmethod
     def find_by_name(self, name: str) -> PlaylistEntity | None:
+        ...
+
+    @abstractmethod
+    def list_playlist_by_user(self, id: UUID) -> List[PlaylistEntity]:
         ...
 
     @abstractmethod

@@ -11,3 +11,7 @@ class ConflictMediaSourceFieldException(BaseDomainException):
 
 class FieldMediaSourceRequiredException(BaseDomainException):
     ...
+
+
+class FailedDownloadMusicException(BaseDomainException):
+    pass

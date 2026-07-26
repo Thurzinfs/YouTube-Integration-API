@@ -92,4 +92,3 @@ class PlaylistTrackUpdateDTO(BaseModel):
 
 class DeletePlaylistTrackInDTO(BaseModel):
     playlist_track: UUID
-    media_source: UUID

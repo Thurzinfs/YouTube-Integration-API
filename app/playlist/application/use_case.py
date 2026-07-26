@@ -202,10 +202,9 @@ class ListMusicsInPlaylistTrack:
 
 
 class RemoveMusicInPlaylist:
-    def __init__(self, playlist_track_repo: IPlaylistTrackRepository, track_repo: ITrackRepository, user_repo: IUserRepository) -> None:
+    def __init__(self, playlist_track_repo: IPlaylistTrackRepository, track_repo: ITrackRepository) -> None:
         self.playlist_track_repo = playlist_track_repo
         self.track_repo = track_repo
-        self.user_repo = user_repo
 
     def execute(self, user: UUID, dto: DeletePlaylistTrackInDTO):
         playlist_track = self.playlist_track_repo.find_by_id(dto.playlist_track)
@@ -222,5 +221,4 @@ class RemoveMusicInPlaylist:
         if track.user != user:
             raise BaseDomainException('user unauthorized')
 
-        playlist_track.deactive()
-        self.playlist_track_repo.save(playlist_track)
+        self.playlist_track_repo.delete_by_id(dto.playlist_track)

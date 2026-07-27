@@ -62,7 +62,7 @@ class PlaylistModuleContainer(containers.DeclarativeContainer):
         ListMusicsInPlaylistTrack,
         playlist_track_repo=playlist_track_repo,
         track_repo=track_repo,
-        music_source_repo=media_source_repo
+        music_repo=media_source_repo
     )
 
     remove_music_in_playlist_use_case = providers.Factory(

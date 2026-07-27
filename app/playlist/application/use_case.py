@@ -201,7 +201,7 @@ class ListMusicsInPlaylistTrack:
         ]
 
 
-class RemoveMusicInPlaylist:
+class RemoveMusicInPlaylistUseCase:
     def __init__(self, playlist_track_repo: IPlaylistTrackRepository, track_repo: ITrackRepository) -> None:
         self.playlist_track_repo = playlist_track_repo
         self.track_repo = track_repo
@@ -224,7 +224,7 @@ class RemoveMusicInPlaylist:
         self.playlist_track_repo.delete_by_id(playlist_track.id)
 
 
-class RemoveMusicInTrack:
+class RemoveMusicInTrackUseCase:
     def __init__(self, track_repo: ITrackRepository) -> None:
         self.track_repo = track_repo
 

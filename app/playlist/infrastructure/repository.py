@@ -14,7 +14,7 @@ class PlaylistRepository(IPlaylistRepository):
             id=playlist.id,
             defaults={
                 'name': playlist.name,
-                'user': playlist.user,
+                'user_id': playlist.user,
                 'created_at': playlist.created_at,
                 'deleted_at': playlist.deleted_at
             }
@@ -67,8 +67,8 @@ class TrackRepository(ITrackRepository):
         Track.objects.update_or_create(
             id=track.id,
             defaults={
-                'user': track.user,
-                'media_source': track.media_source,
+                'user_id': track.user,
+                'media_source_id': track.media_source,
                 'custom_title': track.custom_title,
                 'added_at': track.added_at,
                 'deleted_at': track.deleted_at
@@ -79,7 +79,7 @@ class TrackRepository(ITrackRepository):
     
     def find_by_id(self, id: UUID) -> TrackEntity | None:
         try:
-            self._to_model(Track.objects.get(id=id))
+            return self._to_model(Track.objects.get(id=id))
 
         except Track.DoesNotExist:
             return None
@@ -129,8 +129,8 @@ class PlaylistTrackRepository(IPlaylistTrackRepository):
         PlaylistTrack.objects.update_or_create(
             id=entity.id,
             defaults={
-                'playlist': entity.playlist,
-                'track': entity.track,
+                'playlist_id': entity.playlist,
+                'track_id': entity.track,
                 'position': entity.position,
                 'deleted_at': entity.deleted_at
             }

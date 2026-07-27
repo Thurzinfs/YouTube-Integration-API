@@ -27,7 +27,7 @@ class UserOutDTO(BaseModel):
         return cls(
             id=model.id,
             name=model.name,
-            email=model.name,
+            email=model.email,
             password=model.password,
             created_at=model.created_at,
             deleted_at=model.deleted_at,

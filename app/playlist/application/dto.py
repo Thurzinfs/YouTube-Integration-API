@@ -43,7 +43,7 @@ class TrackOutDTO(BaseModel):
     user: Optional[UUID] = None
     media_source: Optional[UUID] = None
     custom_title: str
-    created_at: datetime
+    added_at: datetime
     deleted_at: Optional[datetime] = None
 
     @classmethod
@@ -53,7 +53,7 @@ class TrackOutDTO(BaseModel):
             user=model.user,
             media_source=model.media_source,
             custom_title=model.custom_title,
-            created_at=model.created_at,
+            added_at=model.added_at,
             deleted_at=model.deleted_at
         )
 
@@ -65,7 +65,6 @@ class TrackUpdateDTO(BaseModel):
 class PlaylistTrackInDTO(BaseModel):
     playlist: UUID
     track: UUID
-    position: int
 
 
 class PlaylistTrackOutDTO(BaseModel):
@@ -73,7 +72,7 @@ class PlaylistTrackOutDTO(BaseModel):
     playlist: UUID
     track: UUID
     position: int
-    deleted_at: datetime
+    deleted_at: Optional[datetime] = None
 
     @classmethod
     def from_domain(cls, model):

@@ -91,6 +91,6 @@ class IPlaylistTrackRepository(ABC):
         ...
 
     @abstractmethod
-    def list_musics_whithin_playlist(self, playlist: UUID) -> List[PlaylistTrackEntity]:
+    def list_playlist_track_by_playlist(self, playlist: UUID) -> List[PlaylistTrackEntity]:
         ...
     

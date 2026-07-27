@@ -63,7 +63,7 @@ class TrackOut(Schema):
     user: Optional[UUID] = None
     media_source: Optional[UUID] = None
     custom_title: str
-    created_at: datetime
+    added_at: datetime
     deleted_at: Optional[datetime] = None
 
     @staticmethod
@@ -73,7 +73,7 @@ class TrackOut(Schema):
             user=dto.user,
             media_source=dto.media_source,
             custom_title=dto.custom_title,
-            created_at=dto.created_at,
+            added_at=dto.added_at,
             deleted_at=dto.deleted_at
         )
 
@@ -85,13 +85,11 @@ class TrackUpdate(Schema):
 class PlaylistTrackIn(Schema):
     playlist: UUID
     track: UUID
-    position: int
 
     def to_dto(self) -> PlaylistTrackInDTO:
         return PlaylistTrackInDTO(
             playlist=self.playlist,
             track=self.track,
-            position=self.position
         )
 
 
@@ -100,7 +98,7 @@ class PlaylistTrackOut(Schema):
     playlist: UUID
     track: UUID
     position: int
-    deleted_at: datetime
+    deleted_at: Optional[datetime] = None
 
     @staticmethod
     def from_domain(dto: PlaylistTrackOutDTO):

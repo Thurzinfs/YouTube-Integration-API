@@ -169,7 +169,7 @@ class ListMusicsInPlaylistTrack:
         self.music_repo = music_repo
 
     def execute(self, playlist: UUID):
-        playlist_track = self.playlist_track_repo.list_musics_whithin_playlist(playlist)
+        playlist_track = self.playlist_track_repo.list_playlist_track_by_playlist(playlist)
         if not playlist_track:
             raise BaseDomainException("playlist track not found")
 

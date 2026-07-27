@@ -3,13 +3,18 @@ from uuid import UUID
 
 from ninja import Router
 
+from app.music.api.schemas import MediaSourceOut
 from app.playlist.api.dependencies import PlaylistModuleContainer
-from app.playlist.api.schemas import PlaylistIn, PlaylistOut
+from app.playlist.api.schemas import PlaylistIn, PlaylistOut, PlaylistTrackIn, PlaylistTrackOut, TrackIn, TrackOut
 
 from django.db.transaction import atomic
 
 
 router_playlist = Router()
+
+track_router = Router()
+
+playlist_track_router = Router()
 
 container = PlaylistModuleContainer()
 
@@ -38,6 +43,18 @@ def list_playlist(request, user_id: UUID):
     ]
 
 
+@router_playlist.get('/musics/{id}', response={200: List[MediaSourceOut]})
+def list_musics_in_playlist(request, id: UUID):
+    use_case = container.list_musics_in_playlist_use_case()
+
+    musics = use_case.execute(id)
+
+    return 200, [
+        MediaSourceOut.from_domain(music)
+        for music in musics
+    ]
+
+
 @router_playlist.get('/{id}', response={200: PlaylistOut})
 def response_playlist(request, id: UUID):
     use_case = container.response_playlist_use_case()
@@ -45,3 +62,39 @@ def response_playlist(request, id: UUID):
     playlist = use_case.execute(id)
 
     return 200, PlaylistOut.from_domain(playlist)
+
+
+@track_router.post('/', response={201: TrackOut})
+@atomic
+def register_track(request, data: TrackIn):
+    dto = data.to_dto()
+
+    use_case = container.register_track_use_case()
+
+    track = use_case.execute(dto)
+
+    return 201, TrackOut.from_domain(track)
+
+
+@track_router.get('/{id}', response={200: List[TrackOut]})
+def list_track(request, id: UUID):
+    use_case = container.list_track_use_case()
+
+    tracks = use_case.execute(id)
+
+    return 200, [
+        TrackOut.from_domain(track)
+        for track in tracks
+    ]
+
+
+@playlist_track_router.post('/', response={201: PlaylistTrackOut})
+@atomic
+def regiter_playlist_track(request, user: UUID, data: PlaylistTrackIn):
+    dto = data.to_dto()
+
+    use_case = container.register_playlist_track_use_case()
+
+    playlist_track = use_case.execute(user, dto)
+
+    return 201, PlaylistTrackOut.from_domain(playlist_track)

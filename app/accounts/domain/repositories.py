@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from app.accounts.domain.entities import UserEntity
+from app.accounts.domain.entities import RefreshTokenEntity, UserEntity
 
 
 class IUserRepository(ABC):
@@ -19,4 +19,18 @@ class IUserRepository(ABC):
 
     @abstractmethod
     def verify_exists_email(self, email: str) -> bool:
+        ...
+
+
+class IRefreshTokenRepository(ABC):
+    @abstractmethod
+    def save(self, entity: RefreshTokenEntity) -> RefreshTokenEntity:
+        ...
+
+    @abstractmethod
+    def find_by_hash(self, hash: str) -> RefreshTokenEntity | None:
+        ...
+
+    @abstractmethod
+    def revoke_all_by_user(self, user_id: UUID) -> None:
         ...

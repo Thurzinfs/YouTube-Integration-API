@@ -2,19 +2,26 @@ from dependency_injector import containers, providers
 
 from app.accounts.application.use_cases import (
     DeactiveUserUseCase,
+    LoginUseCase,
     RegisterUserUseCase,
     ResponseUserByEmailUseCase,
     ResponseUserByIdUseCase,
     UpdateUserUseCase,
 )
-from app.accounts.infrastructure.repository import UserRepository
-from app.accounts.infrastructure.services import HashService
+from app.accounts.infrastructure.repository import RefreshTokenRepository, UserRepository
+from app.accounts.infrastructure.services import HashService, RefreshTokenService
 
 
 class AccountContainer(containers.DeclarativeContainer):
     user_repo = providers.Factory(UserRepository)
 
     hash_service = providers.Factory(HashService)
+
+    token_repo = providers.Factory(RefreshTokenRepository)
+
+    token_service = providers.Factory(
+        RefreshTokenService
+    )
 
     register_user_use_case = providers.Factory(
         RegisterUserUseCase, user_repo=user_repo, hash_service=hash_service
@@ -34,4 +41,12 @@ class AccountContainer(containers.DeclarativeContainer):
 
     deactive_user_use_case = providers.Factory(
         DeactiveUserUseCase, user_repo=user_repo
+    )
+
+    login_use_case = providers.Factory(
+        LoginUseCase,
+        user_repo=user_repo,
+        token_repo=token_repo,
+        token_service=token_service,
+        hash_service=hash_service
     )

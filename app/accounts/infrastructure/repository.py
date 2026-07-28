@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from app.accounts.domain.entities import UserEntity
-from app.accounts.infrastructure.models import User
-from app.accounts.domain.repositories import IUserRepository
+from app.accounts.domain.entities import RefreshTokenEntity, UserEntity
+from app.accounts.infrastructure.models import RefreshToken, User
+from app.accounts.domain.repositories import IRefreshTokenRepository, IUserRepository
 
 
 class UserRepository(IUserRepository):
@@ -47,4 +47,40 @@ class UserRepository(IUserRepository):
             created_at=model.created_at,
             deleted_at=model.deleted_at,
             deactive=model.deactive,
+        )
+
+
+class RefreshTokenRepository(IRefreshTokenRepository):
+    def save(self, entity: RefreshTokenEntity) -> RefreshTokenEntity:
+        RefreshToken.objects.update_or_create(
+            id=entity.id,
+            defaults={
+                'hash_token': entity.hash_token,
+                'revoked': entity.revoked,
+                'user_id': entity.user,
+                'created_at': entity.created_at,
+                'expire_at': entity.expire_at,
+            },
+        )
+
+        return entity
+
+    def find_by_hash(self, hash: str) -> RefreshTokenEntity | None:
+        try:
+            return self._to_model(RefreshToken.objects.get(hash_token=hash))
+
+        except RefreshToken.DoesNotExist:
+            return None
+
+    def revoke_all_by_user(self, user_id: UUID) -> None:
+        RefreshToken.objects.filter(user=user_id).update(revoked=True)
+
+    def _to_model(self, model: RefreshToken) -> RefreshTokenEntity:
+        return RefreshTokenEntity(
+            id=model.id,
+            hash_token=model.hash_token,
+            revoked=model.revoked,
+            user=model.user.id,
+            created_at=model.created_at,
+            expire_at=model.expire_at,
         )

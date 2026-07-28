@@ -3,14 +3,17 @@ from uuid import UUID
 from ninja import Router
 from pydantic import EmailStr
 
+from app.accounts.api.auth import AuthBearer
 from app.accounts.api.dependencies import AccountContainer
-from app.accounts.api.schemas import UserIn, UserOut, UserUpdate
+from app.accounts.api.schemas import LoginIn, LoginOut, UserIn, UserOut, UserUpdate
 
 from django.db.transaction import atomic
 
 from app.accounts.application.dto import UserUpdateDTO
 
 router = Router()
+
+auth_router = Router()
 
 container = AccountContainer()
 
@@ -65,3 +68,20 @@ def deactive_user(request, id: UUID):
     user = use_case.execute(id)
 
     return UserOut.from_domain(user)
+
+
+@auth_router.post('/login', response={200: LoginOut})
+@atomic
+def login(request, data: LoginIn):
+    dto = data.to_dto()
+
+    use_case = container.login_use_case()
+
+    tokens = use_case.execute(dto)
+
+    return 200, LoginOut.from_domain(tokens)
+
+
+@auth_router.get('/me', response={200: UserOut}, auth=AuthBearer())
+def request_me(request):
+    return UserOut.from_domain(request.auth)

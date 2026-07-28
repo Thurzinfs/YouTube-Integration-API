@@ -128,6 +128,12 @@ USE_I18N = True
 
 USE_TZ = True
 
+JWT_SECRET_KEY = os.getenv('SECRET_KEY')
+JWT_ALGORITHIM = 'HS256'
+JWT_EXP_MINUTES = 30
+JWT_EXP_DAYS = 7
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/

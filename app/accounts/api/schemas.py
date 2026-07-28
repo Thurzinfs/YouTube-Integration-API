@@ -5,7 +5,7 @@ from uuid import UUID
 from ninja import Schema
 from pydantic import EmailStr
 
-from app.accounts.application.dto import UserInDTO, UserOutDTO, UserUpdateDTO
+from app.accounts.application.dto import LoginInDTO, LoginOutDTO, UserInDTO, UserOutDTO, UserUpdateDTO
 
 
 class UserIn(Schema):
@@ -51,4 +51,23 @@ class UserUpdate(Schema):
     def to_dto(self) -> UserUpdateDTO:
         return UserUpdateDTO(
             name=self.name, email=self.email, password=self.password
+        )
+
+
+class LoginIn(Schema):
+    email: EmailStr
+    password: str
+
+    def to_dto(self) -> LoginInDTO:
+        return LoginInDTO(email=str(self.email), password=self.password)
+
+
+class LoginOut(Schema):
+    access_token: str
+    refresh_token: str
+
+    @staticmethod
+    def from_domain(dto: LoginOutDTO):
+        return LoginOut(
+            access_token=dto.access_token, refresh_token=dto.refresh_token
         )

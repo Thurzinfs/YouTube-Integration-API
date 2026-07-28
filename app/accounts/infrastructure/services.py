@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Tuple
 from uuid import uuid4
 
 import jwt
@@ -37,7 +38,7 @@ class RefreshTokenService(IRefreshTokenService):
 
     def generate_refresh_token(
         self, user: UserEntity
-    ) -> tuple[str, RefreshTokenEntity]:
+    ) -> Tuple[str, RefreshTokenEntity]:
         raw_token = str(uuid4())
 
         hash_token = self.hash_token(raw_token)

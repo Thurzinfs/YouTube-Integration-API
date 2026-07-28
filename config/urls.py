@@ -3,7 +3,7 @@ from django.urls import path
 
 from ninja import NinjaAPI
 
-from app.accounts.api.views import router as account_router
+from app.accounts.api.views import router as account_router, auth_router
 from app.music.api.views import router as music_router
 from app.playlist.api.views import router_playlist, track_router, playlist_track_router
 
@@ -15,6 +15,7 @@ def health_check(request):
     return {'msg': 'OK'}
 
 
+api.add_router('/auth', auth_router, tags=['Auth'])
 api.add_router('/account', account_router, tags=['Accounts'])
 api.add_router('/music', music_router, tags=['Music'])
 api.add_router('/playlist', router_playlist, tags=['Playlist'])

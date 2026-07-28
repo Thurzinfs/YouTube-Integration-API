@@ -43,3 +43,22 @@ class UserEntity:
 
         self.deleted_at = datetime.now()
         self.deactive = True
+
+
+@dataclass
+class RefreshTokenEntity:
+    id: UUID = field(default_factory=uuid4)
+    user: UUID | None = field(default=None)
+    hash_token: str = field(default='')
+    revoked: bool = field(default=False)
+    created_at: datetime = field(default_factory=datetime.now)
+    expire_at: datetime | None = field(default=None)
+
+    def revoke_token(self):
+        self.revoked = True
+
+    def is_valid(self) -> bool:
+        if not self.expire_at:
+            return False
+
+        return not self.revoked and datetime.now() < self.expire_at

@@ -28,3 +28,18 @@ class User(AbstractBaseUser, models.Model):
 
     class Meta:
         db_table = 'users'
+
+
+class RefreshToken(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    user = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.CASCADE
+    )
+    hash_token = models.CharField(max_length=120)
+    revoked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expire_at = models.DateTimeField()
+
+    class Meta:
+        db_table = 'refresh_token'

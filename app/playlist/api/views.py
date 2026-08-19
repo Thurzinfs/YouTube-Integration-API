@@ -3,7 +3,7 @@ from uuid import UUID
 
 from ninja import Router
 
-from app.accounts.api.auth import AuthBearer
+from app.accounts.api.auth import auth_cookie
 from app.music.api.schemas import MediaSourceOut
 from app.playlist.api.dependencies import PlaylistModuleContainer
 from app.playlist.api.schemas import PlaylistIn, PlaylistOut, PlaylistTrackIn, PlaylistTrackOut, TrackIn, TrackOut
@@ -20,7 +20,7 @@ playlist_track_router = Router()
 container = PlaylistModuleContainer()
 
 
-@router_playlist.post('/', response={201: PlaylistOut}, auth=AuthBearer())
+@router_playlist.post('/', response={201: PlaylistOut}, auth=auth_cookie)
 @atomic
 def register_playlist(request, data: PlaylistIn):
     dto = data.to_dto()
@@ -32,7 +32,7 @@ def register_playlist(request, data: PlaylistIn):
     return 201, PlaylistOut.from_domain(playlist)
 
 
-@router_playlist.get('/list', response={200: List[PlaylistOut]}, auth=AuthBearer())
+@router_playlist.get('/list', response={200: List[PlaylistOut]}, auth=auth_cookie)
 def list_playlist(request):
     use_case = container.list_playlist_by_user_use_case()
 
@@ -44,7 +44,7 @@ def list_playlist(request):
     ]
 
 
-@router_playlist.get('/musics/{id}', response={200: List[MediaSourceOut]}, auth=AuthBearer())
+@router_playlist.get('/musics/{id}', response={200: List[MediaSourceOut]}, auth=auth_cookie)
 def list_musics_in_playlist(request, id: UUID):
     use_case = container.list_musics_in_playlist_use_case()
 
@@ -56,7 +56,7 @@ def list_musics_in_playlist(request, id: UUID):
     ]
 
 
-@router_playlist.get('/{id}', response={200: PlaylistOut}, auth=AuthBearer())
+@router_playlist.get('/{id}', response={200: PlaylistOut}, auth=auth_cookie)
 def response_playlist(request, id: UUID):
     use_case = container.response_playlist_use_case()
 
@@ -65,7 +65,27 @@ def response_playlist(request, id: UUID):
     return 200, PlaylistOut.from_domain(playlist)
 
 
-@track_router.post('/', response={201: TrackOut}, auth=AuthBearer())
+@router_playlist.delete('/{id}', response={200: None}, auth=auth_cookie)
+@atomic
+def remove_playlist(request, id: UUID):
+    use_case = container.remove_playlist_use_case()
+
+    use_case.execute(request.auth.id, id)
+
+    return 200, None
+
+
+@router_playlist.delete('/musics/{id}', response={200: None}, auth=auth_cookie)
+@atomic
+def remove_music_in_playlist(request, id: UUID):
+    use_case = container.remove_music_in_playlist_use_case()
+
+    use_case.execute(request.auth.id, id)
+
+    return 200, None
+
+
+@track_router.post('/', response={201: TrackOut}, auth=auth_cookie)
 @atomic
 def register_track(request, data: TrackIn):
     dto = data.to_dto()
@@ -77,7 +97,7 @@ def register_track(request, data: TrackIn):
     return 201, TrackOut.from_domain(track)
 
 
-@track_router.get('/{id}', response={200: List[TrackOut]}, auth=AuthBearer())
+@track_router.get('/{id}', response={200: List[TrackOut]}, auth=auth_cookie)
 def list_track(request):
     use_case = container.list_track_use_case()
 
@@ -89,7 +109,17 @@ def list_track(request):
     ]
 
 
-@playlist_track_router.post('/', response={201: PlaylistTrackOut}, auth=AuthBearer())
+@track_router.delete('/{id}', response={200: None}, auth=auth_cookie)
+@atomic
+def remove_track(request, id: UUID):
+    use_case = container.remove_music_in_track_use_case()
+
+    use_case.execute(request.auth.id, id)
+
+    return 200, None
+
+
+@playlist_track_router.post('/', response={201: PlaylistTrackOut}, auth=auth_cookie)
 @atomic
 def regiter_playlist_track(request, data: PlaylistTrackIn):
     dto = data.to_dto()

@@ -1,15 +1,17 @@
 from uuid import UUID
 
+from django.http import HttpResponse
 from ninja import Router
 from pydantic import EmailStr
 
-from app.accounts.api.auth import AuthBearer
+from app.accounts.api.auth import auth_cookie
 from app.accounts.api.dependencies import AccountContainer
 from app.accounts.api.schemas import LoginIn, LoginOut, UserIn, UserOut, UserUpdate
 
 from django.db.transaction import atomic
 
 from app.accounts.application.dto import UserUpdateDTO
+from config import settings
 
 router = Router()
 
@@ -70,7 +72,7 @@ def deactive_user(request, id: UUID):
     return UserOut.from_domain(user)
 
 
-@auth_router.post('/login', response={200: LoginOut})
+@auth_router.post('/login')
 @atomic
 def login(request, data: LoginIn):
     dto = data.to_dto()
@@ -79,9 +81,33 @@ def login(request, data: LoginIn):
 
     tokens = use_case.execute(dto)
 
-    return 200, LoginOut.from_domain(tokens)
+    response = HttpResponse(
+        content='{"detail": "Login realizado com sucesso"}',
+        content_type="application/json",
+        status=200
+    )
+    
+    response.set_cookie(
+        key="access_token",
+        value=tokens.access_token,
+        httponly=True,
+        secure=True,  
+        samesite="Lax", 
+        max_age=settings.JWT_EXP_MINUTES * 60 * 60
+    )
+
+    response.set_cookie(
+        key='refresh_token',
+        value=tokens.refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="Lax",
+        max_age=settings.JWT_EXP_DAYS * (24 * 60 * 60)
+    )
+    
+    return response
 
 
-@auth_router.get('/me', response={200: UserOut}, auth=AuthBearer())
+@auth_router.get('/me', response={200: UserOut}, auth=auth_cookie)
 def request_me(request):
     return UserOut.from_domain(request.auth)
